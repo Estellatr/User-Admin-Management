@@ -20,6 +20,7 @@ exports.sendEmailWithNodeMailer = async (emailData) => {
             html: emailData.html
         };
 
+
         await transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log("-----SMTP ERROR1-----");
@@ -30,7 +31,7 @@ exports.sendEmailWithNodeMailer = async (emailData) => {
         })
     } catch (error) {
         console.log("-----SMTP ERROR1-----");
-        console.log("Problem sending email: ", error);
+        console.log("Problem sending email: ", error)
     }
 
 };
