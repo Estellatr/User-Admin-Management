@@ -1,7 +1,7 @@
 const {Schema, model} = require("mongoose");
 const validator = require("validator");
 
-const SALT_WORK_FACTOR = 10;
+// const SALT_WORK_FACTOR = 10;
 
 const userSchema = new Schema({
     name: {
@@ -9,7 +9,7 @@ const userSchema = new Schema({
         trim: true,
         required: [true, "Name is required"],
         minLength: [2, "Name length must be a minimum of 2 characters"],
-        maxLength: [100, "Name length cannot be longer than 80 characters"],
+        maxLength: [100, "Name length cannot be longer than 100 characters"],
 
     },
     email: {
