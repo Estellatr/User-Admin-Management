@@ -63,7 +63,7 @@ const logoutAdmin = (req, res) => {
       message: error.message,
     })
   }
-}
+};
 
 const getAllUsers = async (req, res) => {
     try {
@@ -72,9 +72,21 @@ const getAllUsers = async (req, res) => {
       .limit(limit)
       .skip((page - 1) * limit);
       successResponse(res, 200, "All Users Returned", users);
-      
     } catch (error) {
         errorResponse(res, 500, error.message);
+    }
+};
+
+const searchUser = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const user = await User.findOne({ id });
+        if (!user) {
+            errorResponse(res, 400, "No user found with this ID.")
+        }
+        successResponse(res, 200, "User returned:", user)
+    } catch (error) {
+        errorResponse(res, 500, error.message)
     }
 }
 
@@ -92,7 +104,7 @@ const deleteUserByAdmin = async (req, res) => {
         message: error.message
       })
     }
-}
+};
 
 const updateUserByAdmin = async (req, res) => {
     try {
@@ -129,7 +141,7 @@ const updateUserByAdmin = async (req, res) => {
           message: error.message
         })
       }
-}
+};
 
 const exportUsers = async (req, res) => {
     try {
@@ -181,5 +193,6 @@ module.exports = {
   logoutAdmin,
   deleteUserByAdmin,
   updateUserByAdmin,
-  exportUsers
+  exportUsers,
+  searchUser
 };

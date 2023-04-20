@@ -4,7 +4,7 @@ const adminRouter = require("express").Router();
 
 const dev = require('../config');
 const { isLoggedIn, isLoggedOut } = require("../middlewares/auth");
-const { loginAdmin, logoutAdmin, getAllUsers, deleteUserByAdmin, updateUserByAdmin, exportUsers } = require("../controllers/admin");
+const { loginAdmin, logoutAdmin, getAllUsers, deleteUserByAdmin, updateUserByAdmin, exportUsers, searchUser } = require("../controllers/admin");
 const { isAdmin } = require("../middlewares/isAdmin");
 
 adminRouter.use(
@@ -22,7 +22,8 @@ adminRouter.post("/login", isLoggedOut, loginAdmin);
 adminRouter.put("/dashboard/:id", isLoggedIn, isAdmin, updateUserByAdmin);
 adminRouter.get("/logout", isLoggedIn, logoutAdmin);
 adminRouter.get("/dashboard/allUsers", isLoggedIn, getAllUsers);
-adminRouter.get('/dashboard/export-users', exportUsers)
+adminRouter.get("/dashboard/searchUser", isLoggedIn, isAdmin, searchUser);
+adminRouter.get('/dashboard/export-users', exportUsers);
 adminRouter.delete('dashboard/:id', isLoggedIn, isAdmin, deleteUserByAdmin);
 
 module.exports = adminRouter;
