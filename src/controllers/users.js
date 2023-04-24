@@ -28,7 +28,7 @@ const getAllUsers = async (req, res) => {
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, phone } = req.fields;
-    const { image } = req.files;
+    const { image } = req.file;
     if (!name || !email || !password || !phone) {
       errorResponse(res, 400, "Name, Email, Password or Phone Number are missing")
     }
@@ -121,7 +121,10 @@ const verifyEmail = async (req, res) => {
 
 const userProfile = async (req, res) => {
   try {
-    const user = await User.findById( req.session.userID, { password: 0 } );
+    const user = await User.findById( req.params.id, { password: 0 } );
+    if (!user) {
+      errorResponse(res, 404, "User not found.")
+    }
     return res.status(200).json({
       ok: true,
       user: user,
@@ -166,10 +169,9 @@ const loginUser = async (req, res) => {
       req.cookies[`${user.id}`] = '';
     }
 
-    res.cookie(String(user._id), token, {
-      path: '/',
+    res.cookie("authToken", token, {
       expires: new Date(Date.now() + 1000 * 4 * 60),
-      httpOnly: true, // send the jwt token inside http only cookie
+      httpOnly: true, 
       sameSite: 'none',
       secure: false,
     })
@@ -197,8 +199,9 @@ const loginUser = async (req, res) => {
 
 const logoutUser = (req, res) => {
   try {
-    req.session.destroy();
-    res.clearCookie('user_session');
+    // req.session.destroy();
+    // res.clearCookie('user_session');
+    res.clearCookie("authToken");
     res.status(200).json({
       ok: true,
       message: "Logout successful!"
@@ -213,7 +216,7 @@ const logoutUser = (req, res) => {
 
 const deleteProfile = async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.session.userID);
+    await User.findByIdAndDelete(req.params.id);
     res.status(200).json({
       ok: true,
       message: "User deleted",
@@ -233,8 +236,8 @@ const updateProfile = async (req, res) => {
       })
     } 
     const hashedPassword = await securePassword(req.fields.password);
-    const updatedUser = await User.findByIdAndUpdate(req.session.userID, {
-      ...req.fields, password: hashedPassword},
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+      ...req.fields, password: hashedPassword },
       {new: true},
     );
 
@@ -247,8 +250,7 @@ const updateProfile = async (req, res) => {
 
     if (req.files.image) {
       const { image } = req.files;
-      updatedUser.image.data = fs.readFileSync(image.path);
-      updatedUser.image.contentType = image.type;
+      updatedUser.image = image.path;
     }
     await updatedUser.save();
 

@@ -7,15 +7,15 @@ const { isLoggedIn, isLoggedOut } = require("../middlewares/auth");
 const { loginAdmin, logoutAdmin, getAllUsers, deleteUserByAdmin, updateUserByAdmin, exportUsers, searchUser } = require("../controllers/admin");
 const { isAdmin } = require("../middlewares/isAdmin");
 
-adminRouter.use(
-    session({
-        name: "admin_session",
-        secret: dev.app.sessionSecretKey || 'jklaehrpue',
-        resave: 'false',
-        saveUninitialized: true,
-        cookie: { secure: false, maxAge: 10 * 6000 },
-    })
-)
+// adminRouter.use(
+//     session({
+//         name: "admin_session",
+//         secret: dev.app.sessionSecretKey || 'jklaehrpue',
+//         resave: 'false',
+//         saveUninitialized: true,
+//         cookie: { secure: false, maxAge: 10 * 6000 },
+//     })
+// )
 
 adminRouter.post("/login", isLoggedOut, loginAdmin);
 // adminRouter.post("/dashboard", isLoggedIn, createUser);
@@ -24,6 +24,6 @@ adminRouter.get("/logout", isLoggedIn, logoutAdmin);
 adminRouter.get("/dashboard/allUsers", isLoggedIn, getAllUsers);
 adminRouter.get("/dashboard/searchUser", isLoggedIn, isAdmin, searchUser);
 adminRouter.get('/dashboard/export-users', exportUsers);
-adminRouter.delete('dashboard/:id', isLoggedIn, isAdmin, deleteUserByAdmin);
+adminRouter.delete('/dashboard/:id', isLoggedIn, isAdmin, deleteUserByAdmin);
 
 module.exports = adminRouter;

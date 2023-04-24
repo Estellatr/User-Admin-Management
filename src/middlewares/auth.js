@@ -4,48 +4,30 @@ const jwt = require("jsonwebtoken");
 
 const isLoggedIn = (req, res, next) => {
   try {
-    // if (req.session.userID) {
-    //     next()
-    // } else {
-    //     return res.status(400).json({
-    //         message: "You need to login."
-    //     })
-    // }
-    if (!req.headers.cookie) {
-      return errorResponse(res, 404, "No cookie found");
-    }
+    const header = req.headers.cookie;
+    // console.log(typeof(header))
+    if (!header || header === undefined) {
+      errorResponse(res, 401, "You need to login.")
+    };
+    const token = header.split("=")[1];
+    console.log(header)
+    console.log('1')
+    console.log(token, dev.app.jwtAuthorizationKey)
+    jwt.verify(token, dev.app.jwtAuthorizationKey);
+    console.log('2')
 
-    const token = req.headers.cookie.split("=")[1];
-
-    if (!token) {
-      errorResponse(res, 400, "No token found.");
-    }
-
-    jwt.verify(
-      String(dev.app.jwtAuthorizationKey),
-      token,
-      async (err, user) => {
-        if (err) {
-          errorResponse(res, 403, "Invalid token");
-        }
-        req.id = user.id;
-        next();
-      }
-    );
+    next();
   } catch (error) {
-    res.send({
-      message: error.message,
-    });
+    next(error);
   }
 };
 
 const isLoggedOut = (req, res, next) => {
   try {
-    if (req.session.userID) {
-      return res.status(400).json({
-        message: "You need to logout",
-      });
-    }
+    const header = req.headers.cookie;
+    if (header) {
+      errorResponse(res, 401, "You need to logout.")
+    };
     next();
   } catch (error) {
     console.log(error);
