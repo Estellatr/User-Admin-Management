@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-const excelJS = require('exceljs')
-
+const excelJS = require('exceljs');
+const createError = require('http-errors');
 const { securePassword, comparePassword } = require("../helpers/bcryptPassword");
 const User = require("../models/users");
 const dev = require("../config");
@@ -81,9 +81,7 @@ const searchUser = async (req, res) => {
     try {
         const {id} = req.params;
         const user = await User.findOne({ id });
-        if (!user) {
-            errorResponse(res, 400, "No user found with this ID.")
-        }
+        if (!user) throw createError(404, "No user found with this ID.");
         successResponse(res, 200, "User returned:", user)
     } catch (error) {
         errorResponse(res, 500, error.message)

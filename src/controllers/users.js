@@ -158,17 +158,36 @@ const loginUser = async (req, res) => {
       })
     }
 
-    req.session.userID = user._id;
+    const token = jwt.sign({ id: user._id}, String(dev.app.jwtAuthorizationKey), {
+      expiresIn: '5m'
+    });
 
-    res.status(200).json({
-      user: {
+    if (req.cookies[`${user._id}`]) {
+      req.cookies[`${user.id}`] = '';
+    }
+
+    res.cookie(String(user._id), token, {
+      path: '/',
+      expires: new Date(Date.now() + 1000 * 4 * 60),
+      httpOnly: true, // send the jwt token inside http only cookie
+      sameSite: 'none',
+      secure: false,
+    })
+    // req.session.userID = user._id;
+
+    
+      const userData =  {
         name: user.name,
         email: user.email,
         phone: user.phone,
         image: user.image
-      },
-      message: "Login successful!"
-    })
+      };
+
+    return successResponse(res, 200, 'Login successful!', { 
+      user: userData,
+      token: token
+    });
+
   } catch (error) {
     res.status(500).json({
       message: error.message,
