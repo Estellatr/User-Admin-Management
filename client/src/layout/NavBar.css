@@ -1,0 +1,15 @@
+.nav {
+    background-color: darkgrey;
+    display: flex;
+    justify-content: center;
+}
+
+.nav__link {
+    padding: 2rem;
+    text-decoration: none;
+    color: black;
+}
+
+.nav__link:hover {
+    color: white;
+}
